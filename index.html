@@ -2,22 +2,28 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Access System</title>
+<title>Access Terminal</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="background"></div>
+<canvas id="matrix"></canvas>
 
-<!-- TELA DE LOGIN -->
+<!-- LOGIN -->
 <div id="loginScreen" class="center-screen">
     <h1 class="title">ACESSO RESTRITO</h1>
     <input type="password" id="password" placeholder="Digite a senha">
     <button onclick="checkPassword()">ENTRAR</button>
     <p id="error"></p>
+    <p id="lockTimer"></p>
 </div>
 
-<!-- CONTEÚDO PRINCIPAL -->
+<!-- ACESSO CONCEDIDO -->
+<div id="grantedScreen" class="center-screen hidden">
+    <h1 class="granted">ACESSO CONCEDIDO</h1>
+</div>
+
+<!-- CONTEÚDO -->
 <div id="mainContent" class="hidden">
 
     <h1 class="glitch" data-text="sites que a porra da escola deixa usar!">
@@ -25,48 +31,104 @@
     </h1>
 
     <div class="button-list">
-
-        <button onclick="openSite('https://sites.google.com/classroom.center/view-1/')">
-            G+
-        </button>
-
-        <button onclick="openSite('https://www.msn.com/pt-br/play')">
-            MSN
-        </button>
-
-        <button onclick="openSite('https://www.crazygames.com/br/')">
-            Crazy
-        </button>
-
-        <button onclick="openSite('https://www.clickjogos.com.br/')">
-            Click Jogos
-        </button>
-
-        <button onclick="openSite('https://sites.google.com/view/pogunblocked')">
-            Pog Unblocked
-        </button>
-
+        <button onclick="openSite('https://sites.google.com/classroom.center/view-1/')">G+</button>
+        <button onclick="openSite('https://www.msn.com/pt-br/play')">MSN</button>
+        <button onclick="openSite('https://www.crazygames.com/br/')">Crazy</button>
+        <button onclick="openSite('https://www.clickjogos.com.br/')">Click Jogos</button>
+        <button onclick="openSite('https://sites.google.com/view/pogunblocked')">Pog Unblocked</button>
     </div>
 
 </div>
 
 <script>
+/* MATRIX EFFECT */
+const canvas = document.getElementById("matrix");
+const ctx = canvas.getContext("2d");
+
+canvas.height = window.innerHeight;
+canvas.width = window.innerWidth;
+
+const letters = "01";
+const fontSize = 14;
+const columns = canvas.width / fontSize;
+const drops = [];
+
+for (let x = 0; x < columns; x++) drops[x] = 1;
+
+function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#00ff88";
+    ctx.font = fontSize + "px monospace";
+
+    for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975)
+            drops[i] = 0;
+
+        drops[i]++;
+    }
+}
+
+setInterval(drawMatrix, 33);
+
+/* SISTEMA DE SENHA */
+let attempts = 0;
+let locked = false;
 
 function checkPassword() {
+    if (locked) return;
+
     const pass = document.getElementById("password").value;
+    const error = document.getElementById("error");
 
     if (pass === "imsexto") {
-        document.getElementById("loginScreen").style.display = "none";
-        document.getElementById("mainContent").classList.remove("hidden");
+        accessGranted();
     } else {
-        document.getElementById("error").innerText = "Senha incorreta.";
+        attempts++;
+        error.innerText = "Senha incorreta.";
+
+        if (attempts >= 3) {
+            lockSystem();
+        }
     }
+}
+
+function lockSystem() {
+    locked = true;
+    let timeLeft = 30;
+    const timer = document.getElementById("lockTimer");
+    timer.innerText = "Bloqueado por 30 segundos.";
+
+    const interval = setInterval(() => {
+        timeLeft--;
+        timer.innerText = "Tente novamente em " + timeLeft + "s";
+
+        if (timeLeft <= 0) {
+            clearInterval(interval);
+            locked = false;
+            attempts = 0;
+            timer.innerText = "";
+        }
+    }, 1000);
+}
+
+function accessGranted() {
+    document.getElementById("loginScreen").classList.add("hidden");
+    document.getElementById("grantedScreen").classList.remove("hidden");
+
+    setTimeout(() => {
+        document.getElementById("grantedScreen").classList.add("hidden");
+        document.getElementById("mainContent").classList.remove("hidden");
+    }, 2000);
 }
 
 function openSite(url) {
     window.open(url, "_blank");
 }
-
 </script>
 
 </body>
