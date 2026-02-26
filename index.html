@@ -2,20 +2,30 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
-<title>Hacker Sites</title>
+<title>Access System</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="overlay"></div>
+<div class="background"></div>
 
-<div class="container">
+<!-- TELA DE LOGIN -->
+<div id="loginScreen" class="center-screen">
+    <h1 class="title">ACESSO RESTRITO</h1>
+    <input type="password" id="password" placeholder="Digite a senha">
+    <button onclick="checkPassword()">ENTRAR</button>
+    <p id="error"></p>
+</div>
+
+<!-- CONTEÚDO PRINCIPAL -->
+<div id="mainContent" class="hidden">
 
     <h1 class="glitch" data-text="sites que a porra da escola deixa usar!">
         sites que a porra da escola deixa usar!
     </h1>
 
-    <div class="buttons">
+    <div class="button-list">
+
         <button onclick="openSite('https://sites.google.com/classroom.center/view-1/')">
             G+
         </button>
@@ -35,14 +45,28 @@
         <button onclick="openSite('https://sites.google.com/view/pogunblocked')">
             Pog Unblocked
         </button>
+
     </div>
 
 </div>
 
 <script>
+
+function checkPassword() {
+    const pass = document.getElementById("password").value;
+
+    if (pass === "imsexto") {
+        document.getElementById("loginScreen").style.display = "none";
+        document.getElementById("mainContent").classList.remove("hidden");
+    } else {
+        document.getElementById("error").innerText = "Senha incorreta.";
+    }
+}
+
 function openSite(url) {
     window.open(url, "_blank");
 }
+
 </script>
 
 </body>
