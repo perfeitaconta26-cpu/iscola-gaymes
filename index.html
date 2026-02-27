@@ -132,5 +132,32 @@ function openSite(url) {
 }
 </script>
 
+<script>
+// Bloquear F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+document.addEventListener("keydown", function(e) {
+    if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key === "I") ||
+        (e.ctrlKey && e.shiftKey && e.key === "J") ||
+        (e.ctrlKey && e.key === "U")
+    ) {
+        e.preventDefault();
+    }
+});
+
+// Bloquear clique direito
+document.addEventListener("contextmenu", function(e) {
+    e.preventDefault();
+});
+
+// Detectar DevTools aberto
+setInterval(function() {
+    if (window.outerWidth - window.innerWidth > 160 || 
+        window.outerHeight - window.innerHeight > 160) {
+        document.body.innerHTML = "<h1 style='color:red;text-align:center;margin-top:20%'>ACESSO BLOQUEADO</h1>";
+    }
+}, 1000);
+</script>
+
 </body>
 </html>
